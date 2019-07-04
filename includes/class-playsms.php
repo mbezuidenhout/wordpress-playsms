@@ -79,7 +79,7 @@ class Playsms {
 		$this->define_public_hooks();
 
 		// Load admin dependencies.
-		$this->loader->add_action( 'admin_init', $this, 'load_admin' );
+		$this->loader->add_action( 'init', $this, 'load_admin' );
 	}
 
 	/**
@@ -131,6 +131,11 @@ class Playsms {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-playsms-public.php';
 
+		/**
+		 * The class responsible for defining plugin settings.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-playsms-settings.php';
+
 		$this->loader = new Playsms_Loader();
 
 	}
@@ -163,10 +168,11 @@ class Playsms {
 
 		$plugin_admin = new Playsms_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		add_action( 'admin_enqueue_scripts', array( $plugin_admin, 'enqueue_styles' ) );
-		add_action( 'admin_enqueue_scripts', array( $plugin_admin, 'enqueue_scripts' ) );
-		/* @see PlaySMS_Admin::admin_bar() */
-		add_action( 'admin_bar_menu', array( $plugin_admin, 'admin_bar' ) );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		/* @see PlaySMS_Admin::admin_menu() phpcs:ignore */
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'admin_menu' );
+		$this->loader->run();
 
 	}
 

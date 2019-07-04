@@ -27,7 +27,7 @@ class Playsms_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private $plugin_name;
 
@@ -36,33 +36,33 @@ class Playsms_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
 	/**
-	 * Initialize the class and set its properties.
+	 * The settings class.
 	 *
 	 * @since    1.0.0
-	 * @param    string $plugin_name  The name of this plugin.
-	 * @param    string $version      The version of this plugin.
+	 * @access   private
+	 * @var      \Playsms_Settings $settings Instance of the settings class.
+	 */
+	private $settings;
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @param string $plugin_name The name of this plugin.
+	 * @param string $version     The version of this plugin.
+	 *
+	 * @since    1.0.0
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+		$this->settings    = Playsms_Settings::get_instance();
 
-		// Add plugin caps to admin role
-		if ( is_admin() and is_super_admin() ) {
-			$this->add_cap();
-		}
-	}
-
-	public function add_cap() {
-		$role = get_role( 'administrator' );
-
-		$role->add_cap( 'playsms_sendsms' );
-		$role->add_cap( 'playsms_setting' );
 	}
 
 	/**
@@ -86,7 +86,8 @@ class Playsms_Admin {
 
 		$suffix = defined( 'WP_DEBUG' ) && WP_DEBUG ? '' : '.min';
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/playsms-admin' . $suffix . '.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/playsms-admin' . $suffix . '.css',
+			array(), $this->version, 'all' );
 
 	}
 
@@ -111,20 +112,27 @@ class Playsms_Admin {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/playsms-admin' . $suffix . '.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/playsms-admin' . $suffix . '.js',
+			array( 'jquery' ), $this->version, false );
+
+	}
+
+	/**
+	 * Output for the send sms page.
+	 */
+	public function send_sms_page() {
 
 	}
 
 	/**
 	 * Callback action to add admin menu options
 	 */
-	public function admin_bar() {
-		add_menu_page( 'PlaySMS', 'PlaySMS', 'playsms_sendsms', 'playsms', array( $this, 'send_sms_page' ), 'dashicons-email-alt' );
-		add_submenu_page( 'playsms', 'Send SMS', 'Send SMS', 'playsms_sendsms', 'playsms', array( $this, 'send_sms_callback' ) );
+	public function admin_menu() {
+		add_menu_page( __( 'PlaySMS', 'playsms' ), __( 'Send SMS', 'playsms' ), 'manage_options', 'playsms',
+			array( $this, 'send_sms_page' ), 'dashicons-phone' );
+		add_submenu_page( 'playsms', __( 'Settings', 'playsms' ), __( 'Settings', 'playsms' ), 'manage_options',
+			'playsms-send', array( Playsms_Settings::get_instance(), 'settings_page' ) );
 	}
 
-	public function send_sms_page() {
-
-	}
 
 }

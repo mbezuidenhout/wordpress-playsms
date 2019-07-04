@@ -59,6 +59,30 @@ register_activation_hook( __FILE__, 'activate_playsms' );
 register_deactivation_hook( __FILE__, 'deactivate_playsms' );
 
 /**
+ * Create a function similar to wp_mail for sending sms messages
+ */
+if ( ! function_exists( 'wp_sms' ) ) {
+	/**
+	 * Send SMS message to phone number
+	 *
+	 * @param string $to Phone number to send message to.
+	 * @param string $message String message to send.
+	 */
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-playsms-send.php';
+
+	/**
+	 * Send a sms text message to a cell phone
+	 *
+	 * @param string $to Phone number to send to.
+	 * @param string $message Message to send.
+	 */
+	function wp_sms( $to, $message ) {
+		$playsms = Playsms_Send::get_instance();
+		$playsms->send( $to, $message );
+	}
+}
+
+/**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
@@ -79,4 +103,5 @@ function run_playsms() {
 	$plugin->run();
 
 }
+
 run_playsms();
