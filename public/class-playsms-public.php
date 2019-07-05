@@ -27,7 +27,7 @@ class Playsms_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private $plugin_name;
 
@@ -36,16 +36,17 @@ class Playsms_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
 	/**
 	 * Initialize the class and set its properties.
 	 *
+	 * @param string $plugin_name The name of the plugin.
+	 * @param string $version The version of this plugin.
+	 *
 	 * @since    1.0.0
-	 * @param    string $plugin_name   The name of the plugin.
-	 * @param    string $version       The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
@@ -101,6 +102,25 @@ class Playsms_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/playsms-public' . $suffix . '.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Add the mobile field to the user profile page.
+	 *
+	 * @return array
+	 */
+	public function add_mobile_field_to_profile_form() {
+		$fields['mobile'] = __( 'Mobile', 'playsms' );
+
+		return $fields;
+	}
+
+	/**
+	 * Add the mobile field to the user registration page.
+	 */
+	public function add_mobile_field_to_register_form() {
+		$mobile = ( isset( $_POST['mobile'] ) ) ? sanitize_text_field( wp_unslash( $_POST['mobile'] ) ) : '';
+		Playsms::get_template( 'mobile-field-register.php', array( 'mobile' => $mobile ) );
 	}
 
 }

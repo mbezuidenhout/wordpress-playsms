@@ -1,5 +1,17 @@
 <?php
+/**
+ * Defines sms sending functions.
+ *
+ * @link       https://www.facebook.com/marius.bezuidenhout1
+ * @since      1.0.0
+ *
+ * @package    Playsms
+ * @subpackage Playsms/includes
+ */
 
+/**
+ * Class Playsms_Send defined message sending function.
+ */
 class Playsms_Send {
 
 	/**
@@ -7,7 +19,7 @@ class Playsms_Send {
 	 *
 	 * @var Playsms_Send
 	 */
-	private static $instance;
+	protected static $instance;
 
 	/**
 	 * Returns the singleton instance of this class
@@ -15,11 +27,11 @@ class Playsms_Send {
 	 * @return Playsms_Send
 	 */
 	public static function get_instance() {
-		if ( ! self::$instance instanceof self ) {
-			self::$instance = new self();
+		if ( ! static::$instance instanceof self ) {
+			static::$instance = new static();
 		}
 
-		return self::$instance;
+		return static::$instance;
 	}
 
 	/**

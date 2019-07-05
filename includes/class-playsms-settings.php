@@ -1,6 +1,17 @@
 <?php
+/**
+ * Defined the plugin settings.
+ *
+ * @link       https://www.facebook.com/marius.bezuidenhout1
+ * @since      1.0.0
+ *
+ * @package    Playsms
+ * @subpackage Playsms/includes
+ */
 
-
+/**
+ * Class Playsms_Settings defined the plugin options.
+ */
 class Playsms_Settings {
 	/**
 	 * Singleton instance of this class
@@ -15,7 +26,7 @@ class Playsms_Settings {
 	 */
 	public static function get_instance() {
 		if ( ! self::$instance instanceof self ) {
-			self::$instance = new Playsms_Settings();
+			self::$instance = new static();
 		}
 
 		return self::$instance;
