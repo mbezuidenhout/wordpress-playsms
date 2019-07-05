@@ -123,4 +123,10 @@ class Playsms_Public {
 		Playsms::get_template( 'mobile-field-register.php', array( 'mobile' => $mobile ) );
 	}
 
+	public function add_mobile_field_to_my_account_form() {
+		$user   = wp_get_current_user();
+		$mobile = ( isset( $_POST['mobile'] ) ) ? sanitize_text_field( wp_unslash( $_POST['mobile'] ) ) : $user->get( 'mobile' );
+		Playsms::get_template( 'mobile-field-my-account.php', array( 'mobile' => $mobile ) );
+	}
+
 }

@@ -192,6 +192,8 @@ class Playsms {
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'add_mobile_field_to_profile_form' );
 		$this->loader->add_action( 'register_form', $plugin_public, 'add_mobile_field_to_register_form' );
 
+		$this->loader->add_action( 'woocommerce_edit_account_form', $plugin_public, 'add_mobile_field_to_my_account_form' );
+
 	}
 
 	/**
@@ -253,11 +255,11 @@ class Playsms {
 	 */
 	public static function locate_template( $template_name, $template_path = '', $default_path = '' ) {
 		if ( ! $template_path ) {
-			$template_path = plugin_dir_path( dirname( __FILE__ ) ) . '/templates/';
+			$template_path = get_stylesheet_directory() . 'playsms/';
 		}
 
 		if ( ! $default_path ) {
-			$default_path = 'playsms/templates/';
+			$default_path = plugin_dir_path( dirname( __FILE__ ) ) . 'templates/';
 		}
 
 		// Look within passed path within the theme - this is priority.
