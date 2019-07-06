@@ -123,10 +123,55 @@ class Playsms_Public {
 		Playsms::get_template( 'mobile-field-register.php', array( 'mobile' => $mobile ) );
 	}
 
+	/**
+	 * Add mobile number field in my-account page.
+	 */
 	public function add_mobile_field_to_my_account_form() {
 		$user   = wp_get_current_user();
 		$mobile = ( isset( $_POST['mobile'] ) ) ? sanitize_text_field( wp_unslash( $_POST['mobile'] ) ) : $user->get( 'mobile' );
 		Playsms::get_template( 'mobile-field-my-account.php', array( 'mobile' => $mobile ) );
+	}
+
+	/**
+	 * Save extra user parameters
+	 *
+	 * @param int $user_id Registered user id.
+	 */
+	public function save_register( $user_id ) {
+		if ( isset( $_POST['mobile'] ) ) {
+			update_user_meta( $user_id, 'mobile', sanitize_text_field( wp_unslash( $_POST['mobile'] ) ) );
+		}
+	}
+
+	/**
+	 * Check if the number is not already used for another user
+	 *
+	 * @param string $number Mobile phone number.
+	 *
+	 * @return bool
+	 */
+	protected function check_mobile_number( $number ) {
+		// TODO: Check for duplicate phone numbers.
+		return false;
+	}
+
+	/**
+	 * Validate registration fields.
+	 *
+	 * @param WP_Error $errors Registration for error.
+	 *
+	 * @return mixed
+	 */
+	public function registration_errors( $errors ) {
+		if ( empty( $_POST['mobile'] ) ) {
+			$errors->add( 'first_name_error', __( '<strong>ERROR</strong>: You must include a mobile number.', 'playsms' ) );
+		}
+
+		if ( $this->check_mobile_number( $_POST['mobile'] ) ) {
+			$errors->add( 'duplicate_mobile_number', __( '<strong>ERROR</strong>: This mobile is already registered, please choose another one.', 'wp-sms' ) );
+		}
+
+		return $errors;
 	}
 
 }

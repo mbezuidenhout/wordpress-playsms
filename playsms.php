@@ -75,10 +75,13 @@ if ( ! function_exists( 'wp_sms' ) ) {
 	 *
 	 * @param string $to Phone number to send to.
 	 * @param string $message Message to send.
+	 *
+	 * @return bool Has the message been sent successfully?
 	 */
 	function wp_sms( $to, $message ) {
 		$playsms = Playsms_Send::get_instance();
-		$playsms->send( $to, $message );
+
+		return $playsms->send( $to, $message );
 	}
 }
 

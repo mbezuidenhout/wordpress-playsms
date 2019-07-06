@@ -191,6 +191,9 @@ class Playsms {
 
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'add_mobile_field_to_profile_form' );
 		$this->loader->add_action( 'register_form', $plugin_public, 'add_mobile_field_to_register_form' );
+		$this->loader->add_filter( 'registration_errors', $plugin_public, 'registration_errors' );
+		$this->loader->add_filter( 'woocommerce_registration_errors', $plugin_public, 'registration_errors' );
+		$this->loader->add_action( 'user_register', $plugin_public, 'save_register' );
 
 		$this->loader->add_action( 'woocommerce_edit_account_form', $plugin_public, 'add_mobile_field_to_my_account_form' );
 

@@ -39,8 +39,10 @@ class Playsms_Send {
 	 *
 	 * @param string $to The phone number to send the message to.
 	 * @param string $message The message to send.
+	 *
+	 * @return bool Has the message been sent successully?
 	 */
 	public function send( $to, $message ) {
-
+		return wp_mail( $to . '@localhost', __( 'TODO: Complete function send in class Playsms_Send', 'playsms' ), $to . $message );
 	}
 }
