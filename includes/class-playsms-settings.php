@@ -14,12 +14,25 @@
  */
 class Playsms_Settings {
 	/**
-	 * Singleton instance of this class
+	 * Singleton instance of this class.
 	 *
-	 * @var \Playsms_Settings
+	 * @var Playsms_Settings
 	 */
 	private static $instance;
 
+	/**
+	 * Instance of the Playsms_Settings_API class.
+	 *
+	 * @var Playsms_Settings_API
+	 */
+	private $settings_api;
+
+	/**
+	 * Array of plugin settings.
+	 *
+	 * @var array
+	 */
+	private $basic_settings;
 
 	/**
 	 * Returns the singleton instance of the settings class
@@ -32,98 +45,104 @@ class Playsms_Settings {
 		return self::$instance;
 	}
 
+	public function get_username() {
+		return $this->basic_settings['username'];
+	}
+
+	public function get_password() {
+		return $this->basic_settings['password'];
+	}
+
+	public function get_token() {
+		return $this->basic_settings['token'];
+	}
+
+	/**
+	 * Playsms_Settings constructor.
+	 */
+	public function __construct() {
+		$this->settings_api   = new Playsms_Settings_API();
+		$this->basic_settings = get_option( 'playsms_basics' );
+	}
+
 	/**
 	 * Register plugin settings
 	 */
 	public function settings_page() {
-		$this->add_settings_fields();
-		// Check that the user is allowed to update options.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'playsms' ) );
-		}
+		echo '<div class="wrap">';
 
-		// save options.
-		$this->save_settings();
+		$this->settings_api->show_navigation();
+		$this->settings_api->show_forms();
 
-		?>
-		<?php settings_errors(); ?>
-
-        <form method="post" action="">
-
-			<?php settings_fields( 'playsms_settings_group' );               //settings group, defined as first argument in register_setting ?>
-			<?php do_settings_sections( 'playsms_settings_page_section' );   //same as last argument used in add_settings_section ?>
-			<?php submit_button(); ?>
-
-			<?php wp_nonce_field( 'playsms_settings_nonce' ); ?>
-            <div class="clear"></div>
-        </form>
-		<?php
-
+		echo '</div>';
 	}
 
-	protected function save_settings() {
+	/**
+	 * Define the settings sections.
+	 *
+	 * @return array
+	 */
+	private function get_settings_sections() {
+		$sections = array(
+			array(
+				'id'    => 'playsms_basics',
+				'title' => __( 'Basic Settings', 'playsms' ),
+			),
+		);
 
-	}
-
-	public function validate_settings_fields( $field ) {
-
+		return apply_filters( 'playsms_settings_sections', $sections );
 	}
 
 	/**
 	 * Registers plugin settings
 	 */
-	protected function add_settings_fields() {
-		register_setting( 'playsms_settings_group', 'playsms_settings', array( $this, 'validate_settings_fields' ) );
-		add_settings_section( 'playsms_settings_section', null, null, 'playsms_settings_page_section' );
+	public function add_settings_fields() {
+		// set the settings.
+		$this->settings_api->set_sections( $this->get_settings_sections() );
+		$this->settings_api->set_fields( $this->get_settings_fields() );
 
-		foreach ( $this->get_settings() as $setting ) {
-			add_settings_field( $setting['id'], $setting['title'], array( $this, 'render_settings_field' ),
-				'playsms_settings_page_section', 'playsms_settings_section' );
-		}
+		// initialize settings.
+		$this->settings_api->admin_init();
 	}
 
-	public function render_settings_field( $field ) {
-		switch ( $field['type'] ) {
-			case 'text':
-			default:
-				echo '<input id="' . esc_attr( $field['id'] ) . '" type="text" value="' . esc_attr( $field['default'] ) . '" />';
-				break;
-		}
-
-	}
-
-	private function get_settings() {
-		$settings = apply_filters(
-			'playsms_settings',
-			array(
+	/**
+	 * Returns all the settings fields
+	 *
+	 * @return array settings fields
+	 */
+	private function get_settings_fields() {
+		$settings_fields = array(
+			'playsms_basics' => array(
 				array(
-					'id'      => 'playsms_username',
-					'title'   => __( 'Username', 'playsms' ),
-					'desc'    => '',
-					'default' => '',
-					'type'    => 'text',
-					'tip'     => true,
+					'name'              => 'username',
+					'label'             => __( 'Username', 'playsms' ),
+					'desc'              => __( 'PlaySMS server username', 'playsms' ),
+					'placeholder'       => __( 'Username', 'playsms' ),
+					'type'              => 'text',
+					'default'           => '',
+					'sanitize_callback' => 'sanitize_text_field',
 				),
 				array(
-					'id'      => 'playsms_password',
-					'title'   => __( 'Password', 'playsms' ),
-					'desc'    => '',
-					'default' => '',
+					'name'    => 'password',
+					'label'   => __( 'Password', 'wedevs' ),
+					'desc'    => __( 'PlaySMS server password', 'wedevs' ),
 					'type'    => 'password',
-					'tip'     => true,
+					'default' => '',
 				),
 				array(
-					'id'      => 'playsms_webservices_token',
-					'title'   => __( 'Web Services Token', 'playsms' ),
-					'desc'    => '',
-					'default' => '',
-					'type'    => 'text',
-					'tip'     => true,
+					'name'              => 'token',
+					'label'             => __( 'Token', 'playsms' ),
+					'desc'              => __( 'PlaySMS server webservice token', 'playsms' ),
+					'placeholder'       => __( 'Token', 'playsms' ),
+					'type'              => 'text',
+					'default'           => '',
+					'sanitize_callback' => 'sanitize_text_field',
 				),
-			)
+			),
 		);
 
-		return $settings;
+		return $settings_fields;
 	}
+
 
 }

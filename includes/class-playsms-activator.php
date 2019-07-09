@@ -22,14 +22,13 @@
 class Playsms_Activator {
 
 	/**
-	 * Short Description. (use period)
+	 * Initialize plugin.
 	 *
-	 * Long Description.
+	 * Initialize plugin specific parameters. This should probably also be removed on deactivating.
 	 *
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
 	}
 
 }

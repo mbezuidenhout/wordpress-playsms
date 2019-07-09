@@ -131,7 +131,7 @@ class Playsms_Admin {
 		add_menu_page( __( 'PlaySMS', 'playsms' ), __( 'Send SMS', 'playsms' ), 'manage_options', 'playsms',
 			array( $this, 'send_sms_page' ), 'dashicons-phone' );
 		add_submenu_page( 'playsms', __( 'Settings', 'playsms' ), __( 'Settings', 'playsms' ), 'manage_options',
-			'playsms-send', array( Playsms_Settings::get_instance(), 'settings_page' ) );
+			'playsms-settings', array( Playsms_Settings::get_instance(), 'settings_page' ) );
 	}
 
 

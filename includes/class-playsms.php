@@ -135,6 +135,11 @@ class Playsms {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-playsms-settings.php';
 
+		/**
+		 * The class responsible for providing WordPress Settings API functionality.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-playsms-settings-api.php';
+
 		$this->loader = new Playsms_Loader();
 
 	}
@@ -171,6 +176,7 @@ class Playsms {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		/* @see PlaySMS_Admin::admin_menu() phpcs:ignore */
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'admin_menu' );
+		$this->loader->add_action( 'admin_init', Playsms_Settings::get_instance(), 'add_settings_fields' );
 		$this->loader->run();
 
 	}
