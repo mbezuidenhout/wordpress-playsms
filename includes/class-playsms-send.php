@@ -21,8 +21,19 @@ class Playsms_Send {
 	 */
 	protected static $instance;
 
-	const URL = 'https://';
+	/**
+	 * Last error code received.
+	 *
+	 * @var int
+	 */
+	protected $last_error_code;
 
+	/**
+	 * The last queue id received.
+	 *
+	 * @var string
+	 */
+	protected $last_queue_id;
 
 	/**
 	 * Returns the singleton instance of this class
@@ -47,6 +58,12 @@ class Playsms_Send {
 	public function get_error( $code ) {
 		$error_msg = '';
 		switch ( $code ) {
+			case 98:
+				$error_msg = __( 'failed connecting to url endpoint', 'playsms' );
+				break;
+			case 99:
+				$error_msg = __( 'invalid json received', 'playsms' );
+				break;
 			case 100:
 				$error_msg = __( 'authentication failed', 'playsms' );
 				break;
@@ -173,29 +190,73 @@ class Playsms_Send {
 	}
 
 	/**
+	 * Get the last error code.
+	 *
+	 * @return int
+	 */
+	public function get_last_error_code() {
+		return $this->last_error_code;
+	}
+
+	/**
+	 * Get the last error message.
+	 *
+	 * @return string
+	 */
+	public function get_last_error_message() {
+		return $this->get_error( $this->last_error_code );
+	}
+
+	/**
 	 * Sends a text message to phone number
 	 *
 	 * @param string $to The phone number to send the message to.
 	 * @param string $message The message to send.
 	 *
-	 * @return bool Has the message been sent successully?
+	 * @return bool Has the message been sent successfully?
 	 */
 	public function send( $to, $message ) {
+		$this->last_error_code = 0;
+		$this->last_queue_id   = '';
+
 		$settings = PlaySMS_Settings::get_instance();
 
 		$msg = rawurlencode( $message );
 
 		$get_params = array(
-			'h'   => $settings->get_token(),
-			'u'   => $settings->get_username(),
-			'p'   => $settings->get_password(),
+			'h'   => $settings->get_setting( 'token' ),
+			'u'   => $settings->get_setting( 'username' ),
 			'op'  => 'pv',
 			'to'  => $to,
 			'msg' => $msg,
 		);
 
-		//$response = wp_remote_get( sprintf( self::URL . '?%s', $get_params ) );
+		$url = $settings->get_setting( 'endpoint' ) . '?' . http_build_query( $get_params );
 
-		return wp_mail( $to . '@localhost', __( 'TODO: Complete function send in class Playsms_Send', 'playsms' ), $to . $message );
+		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
+
+		if ( $response instanceof WP_Error ) {
+			$this->last_error_code = 98;
+
+			return false;
+		} elseif ( is_array( $response ) ) {
+			try {
+				$result = json_decode( $response['body'] );
+			} catch ( Exception $e ) {
+				$this->last_error_code = 99;
+
+				// TODO: Log result to log file.
+				return false;
+			}
+		}
+
+		$this->last_error_code = intval( $result['data']['error'] );
+		$this->last_queue_id   = $result['data']['queue'];
+		if ( 'OK' === $result['data']['status'] ) {
+			return true;
+		} else {
+			// TODO: Log result to log file.
+			return false;
+		}
 	}
 }

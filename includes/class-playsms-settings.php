@@ -32,7 +32,7 @@ class Playsms_Settings {
 	 *
 	 * @var array
 	 */
-	private $basic_settings;
+	protected $basic_settings;
 
 	/**
 	 * Returns the singleton instance of the settings class
@@ -45,14 +45,35 @@ class Playsms_Settings {
 		return self::$instance;
 	}
 
-	public function get_username() {
-		return $this->basic_settings['username'];
+	/**
+	 * Get setting by name
+	 *
+	 * @param string $name Name of setting to retrieve.
+	 *
+	 * @return mixed
+	 */
+	public function get_setting( $name ) {
+		if ( isset( $this->basic_settings[ $name ] ) ) {
+			return $this->basic_settings[ $name ];
+		} else {
+			return false;
+		}
 	}
 
-	public function get_password() {
-		return $this->basic_settings['password'];
+	/**
+	 * Return all settings
+	 *
+	 * @return array
+	 */
+	public function get_settings() {
+		return $this->basic_settings;
 	}
 
+	/**
+	 * Get the token to use for sending messages.
+	 *
+	 * @return string
+	 */
 	public function get_token() {
 		return $this->basic_settings['token'];
 	}
@@ -61,8 +82,15 @@ class Playsms_Settings {
 	 * Playsms_Settings constructor.
 	 */
 	public function __construct() {
-		$this->settings_api   = new Playsms_Settings_API();
-		$this->basic_settings = get_option( 'playsms_basics' );
+		$this->settings_api = new Playsms_Settings_API();
+
+		$default_settings = array();
+		foreach ( $this->get_settings_fields()['playsms_basics'] as $setting ) {
+			$default_settings[ $setting['name'] ] = $setting['default'];
+		}
+
+		$settings             = empty( get_option( 'playsms_basics' ) ) ? array() : get_option( 'playsms_basics' );
+		$this->basic_settings = array_merge( $settings, $default_settings );
 	}
 
 	/**
@@ -110,7 +138,7 @@ class Playsms_Settings {
 	 *
 	 * @return array settings fields
 	 */
-	private function get_settings_fields() {
+	public function get_settings_fields() {
 		$settings_fields = array(
 			'playsms_basics' => array(
 				array(
@@ -123,11 +151,12 @@ class Playsms_Settings {
 					'sanitize_callback' => 'sanitize_text_field',
 				),
 				array(
-					'name'    => 'password',
-					'label'   => __( 'Password', 'wedevs' ),
-					'desc'    => __( 'PlaySMS server password', 'wedevs' ),
-					'type'    => 'password',
-					'default' => '',
+					'name'              => 'endpoint',
+					'label'             => __( 'Endpoint', 'playsms' ),
+					'desc'              => __( 'PlaySMS server URL endpoint', 'playsms' ),
+					'type'              => 'text',
+					'default'           => '',
+					'sanitize_callback' => 'esc_url_raw',
 				),
 				array(
 					'name'              => 'token',
@@ -141,7 +170,7 @@ class Playsms_Settings {
 			),
 		);
 
-		return $settings_fields;
+		return apply_filters( 'playsms_settings', $settings_fields );
 	}
 
 

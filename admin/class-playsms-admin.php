@@ -121,7 +121,20 @@ class Playsms_Admin {
 	 * Output for the send sms page.
 	 */
 	public function send_sms_page() {
+		if ( isset( $_REQUEST['submit'] ) && isset( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'playsms-sendsms' ) ) {
+			$sms = new Playsms_Send();
+			if ( isset( $_REQUEST['to_number'] ) && isset( $_REQUEST['message'] ) ) {
+				$message_sent = $sms->send( sanitize_text_field( wp_unslash( $_REQUEST['to_number'] ) ), sanitize_text_field( wp_unslash( $_REQUEST['message'] ) ) );
 
+				if ( $message_sent ) {
+					echo '<div class="updated"><p>' . esc_html__( 'The SMS sent successfully.', 'playsms' ) . '</p></div>';
+				} else {
+					/* translators: %s: error message */
+					echo '<div class="error"><p>' . sprintf( esc_html__( 'Failed sending message. %s', 'playsms' ), esc_html( $sms->get_last_error_message() ) ) . '</p></div>';
+				}
+			}
+		}
+		include 'partials/playsms-admin-display.php';
 	}
 
 	/**
@@ -129,7 +142,7 @@ class Playsms_Admin {
 	 */
 	public function admin_menu() {
 		add_menu_page( __( 'PlaySMS', 'playsms' ), __( 'Send SMS', 'playsms' ), 'manage_options', 'playsms',
-			array( $this, 'send_sms_page' ), 'dashicons-phone' );
+			array( $this, 'send_sms_page' ), 'dashicons-smartphone' );
 		add_submenu_page( 'playsms', __( 'Settings', 'playsms' ), __( 'Settings', 'playsms' ), 'manage_options',
 			'playsms-settings', array( Playsms_Settings::get_instance(), 'settings_page' ) );
 	}
