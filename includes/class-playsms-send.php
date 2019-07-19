@@ -238,10 +238,12 @@ class Playsms_Send {
 
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 
-		if ( $response instanceof WP_Error ) {
+		if ( is_wp_error( $response ) ) {
 			$this->last_error_code = 98;
 
 			return $response;
+		} elseif ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error( wp_remote_retrieve_response_code( $response ), wp_remote_retrieve_response_message( $response ) );
 		} elseif ( is_array( $response ) ) {
 			try {
 				$result = json_decode( $response['body'] );
@@ -269,6 +271,7 @@ class Playsms_Send {
 			}
 		} else {
 			return new WP_Error( 97, $this->get_error( 97 ) );
+
 		}
 	}
 }

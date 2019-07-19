@@ -128,7 +128,7 @@ class Playsms_Admin {
 
 				if ( $message_sent instanceof WP_Error ) {
 					/* translators: %s: error message */
-					echo '<div class="error"><p>' . sprintf( esc_html__( 'Failed sending message. %s', 'playsms' ), esc_html( $message_sent->get_error_message() ) ) . '</p></div>';
+					echo '<div class="error"><p>' . sprintf( esc_html__( 'Failed sending message. %s', 'playsms' ), esc_html( $message_sent->get_error_code() . ' ' . $message_sent->get_error_message() ) ) . '</p></div>';
 				} else {
 					echo '<div class="updated"><p>' . esc_html__( 'The SMS sent successfully.', 'playsms' ) . '</p></div>';
 				}
