@@ -213,7 +213,7 @@ class Playsms_Send {
 	 * @param string $to The phone number to send the message to.
 	 * @param string $message The message to send.
 	 *
-	 * @return bool Has the message been sent successfully?
+	 * @return bool|WP_Error
 	 */
 	public function send( $to, $message ) {
 		$this->last_error_code = 0;
@@ -238,15 +238,14 @@ class Playsms_Send {
 		if ( $response instanceof WP_Error ) {
 			$this->last_error_code = 98;
 
-			return false;
+			return $response;
 		} elseif ( is_array( $response ) ) {
 			try {
 				$result = json_decode( $response['body'] );
 			} catch ( Exception $e ) {
 				$this->last_error_code = 99;
 
-				// TODO: Log result to log file.
-				return false;
+				return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
 			}
 		}
 
@@ -256,7 +255,7 @@ class Playsms_Send {
 			return true;
 		} else {
 			// TODO: Log result to log file.
-			return false;
+			return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
 		}
 	}
 }

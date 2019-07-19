@@ -126,11 +126,11 @@ class Playsms_Admin {
 			if ( isset( $_REQUEST['to_number'] ) && isset( $_REQUEST['message'] ) ) {
 				$message_sent = $sms->send( sanitize_text_field( wp_unslash( $_REQUEST['to_number'] ) ), sanitize_text_field( wp_unslash( $_REQUEST['message'] ) ) );
 
-				if ( $message_sent ) {
-					echo '<div class="updated"><p>' . esc_html__( 'The SMS sent successfully.', 'playsms' ) . '</p></div>';
-				} else {
+				if ( $message_sent instanceof WP_Error ) {
 					/* translators: %s: error message */
-					echo '<div class="error"><p>' . sprintf( esc_html__( 'Failed sending message. %s', 'playsms' ), esc_html( $sms->get_last_error_message() ) ) . '</p></div>';
+					echo '<div class="error"><p>' . sprintf( esc_html__( 'Failed sending message. %s', 'playsms' ), esc_html( $message_sent->get_error_message() ) ) . '</p></div>';
+				} else {
+					echo '<div class="updated"><p>' . esc_html__( 'The SMS sent successfully.', 'playsms' ) . '</p></div>';
 				}
 			}
 		}
