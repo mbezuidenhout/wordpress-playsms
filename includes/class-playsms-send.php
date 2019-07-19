@@ -58,6 +58,9 @@ class Playsms_Send {
 	public function get_error( $code ) {
 		$error_msg = '';
 		switch ( $code ) {
+			case 97:
+				$error_msg = __( 'unexpected json format', 'playsms' );
+				break;
 			case 98:
 				$error_msg = __( 'failed connecting to url endpoint', 'playsms' );
 				break;
@@ -249,13 +252,23 @@ class Playsms_Send {
 			}
 		}
 
-		$this->last_error_code = intval( $result['data']['error'] );
-		$this->last_queue_id   = $result['data']['queue'];
-		if ( 'OK' === $result['data']['status'] ) {
-			return true;
+		if ( is_object( $result )
+			&& property_exists( $result, 'data' )
+			&& ! empty( $result->data )
+			&& property_exists( $result->data[0], 'error' )
+			&& property_exists( $result->data[0], 'queue' )
+			&& property_exists( $result->data[0], 'status' )
+			) {
+			$this->last_error_code = intval( $result->data[0]->error );
+			$this->last_queue_id   = $result->data[0]->queue;
+			if ( 'OK' === $result->data[0]->status ) {
+				return true;
+			} else {
+				// TODO: Log result to log file.
+				return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
+			}
 		} else {
-			// TODO: Log result to log file.
-			return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
+			return new WP_Error( 97, $this->get_error( 97 ) );
 		}
 	}
 }
