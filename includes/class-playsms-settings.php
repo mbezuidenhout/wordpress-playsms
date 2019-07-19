@@ -70,15 +70,6 @@ class Playsms_Settings {
 	}
 
 	/**
-	 * Get the token to use for sending messages.
-	 *
-	 * @return string
-	 */
-	public function get_token() {
-		return $this->basic_settings['token'];
-	}
-
-	/**
 	 * Playsms_Settings constructor.
 	 */
 	public function __construct() {
@@ -90,7 +81,7 @@ class Playsms_Settings {
 		}
 
 		$settings             = empty( get_option( 'playsms_basics' ) ) ? array() : get_option( 'playsms_basics' );
-		$this->basic_settings = array_merge( $settings, $default_settings );
+		$this->basic_settings = wp_parse_args( $settings, $default_settings );
 	}
 
 	/**
