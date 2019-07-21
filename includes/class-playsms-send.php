@@ -224,17 +224,16 @@ class Playsms_Send {
 
 		$settings = PlaySMS_Settings::get_instance();
 
-		$msg = rawurlencode( $message );
-
 		$get_params = array(
+			'app' => 'ws',
 			'h'   => $settings->get_setting( 'token' ),
 			'u'   => $settings->get_setting( 'username' ),
 			'op'  => 'pv',
 			'to'  => $to,
-			'msg' => $msg,
+			'msg' => $message,
 		);
 
-		$url = $settings->get_setting( 'endpoint' ) . '?' . http_build_query( $get_params );
+		$url = $settings->get_setting( 'endpoint' ) . '?' . http_build_query( $get_params, null, null, PHP_QUERY_RFC1738 );
 
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 
