@@ -107,12 +107,16 @@ class Playsms_Public {
 	/**
 	 * Add the mobile field to the user profile page.
 	 *
+	 * @param array $methods An array of user contact methods.
+	 *
 	 * @return array
 	 */
-	public function add_mobile_field_to_profile_form() {
-		$fields['mobile'] = __( 'Mobile', 'playsms' );
+	public function add_mobile_field_to_profile_form( $methods ) {
+		$new_methods = array(
+			'mobile' => __( 'Mobile', 'playsms' ),
+		);
 
-		return $fields;
+		return array_merge( $methods, $new_methods );
 	}
 
 	/**
