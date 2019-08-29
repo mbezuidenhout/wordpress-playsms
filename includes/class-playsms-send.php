@@ -233,14 +233,14 @@ class Playsms_Send {
 			'msg' => $message,
 		);
 
-		$url = $settings->get_setting( 'endpoint' ) . '?' . http_build_query( $get_params, null, null, PHP_QUERY_RFC1738 );
+		$url = $settings->get_setting( 'endpoint' ) . '?' . http_build_query( $get_params, null, '&', PHP_QUERY_RFC1738 );
 
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 
 		if ( is_wp_error( $response ) ) {
 			$this->last_error_code = 98;
 
-			return $response;
+			return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
 		} elseif ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error( wp_remote_retrieve_response_code( $response ), wp_remote_retrieve_response_message( $response ) );
 		} elseif ( is_array( $response ) ) {
@@ -269,7 +269,7 @@ class Playsms_Send {
 				return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
 			}
 		} else {
-			return new WP_Error( 97, $this->get_error( 97 ) . '"' . $response['body'] . '"' );
+			return new WP_Error( 97, $this->get_error( 97 ) . ' Message body: "' . $response['body'] . '"' );
 		}
 	}
 }
