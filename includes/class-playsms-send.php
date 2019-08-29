@@ -269,8 +269,7 @@ class Playsms_Send {
 				return new WP_Error( $this->last_error_code, $this->get_error( $this->last_error_code ) );
 			}
 		} else {
-			return new WP_Error( 97, $this->get_error( 97 ) );
-
+			return new WP_Error( 97, $this->get_error( 97 ) . '"' . $response['body'] . '"' );
 		}
 	}
 }

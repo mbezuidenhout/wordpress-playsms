@@ -168,7 +168,7 @@ class Playsms_Public {
 	 */
 	public function registration_errors( $errors ) {
 		if ( empty( $_POST['mobile'] ) ) {
-			$errors->add( 'first_name_error', __( '<strong>ERROR</strong>: You must include a mobile number.', 'playsms' ) );
+			$errors->add( 'mobile_number_error', __( '<strong>ERROR</strong>: You must include a mobile number.', 'wp-sms' ) );
 		}
 
 		if ( $this->check_mobile_number( $_POST['mobile'] ) ) {
