@@ -137,6 +137,15 @@ class Playsms_Public {
 	}
 
 	/**
+	 * Add mobile number field in my-account page.
+	 */
+	public function add_mobile_field_to_checkout_form() {
+		$user   = wp_get_current_user();
+		$mobile = ( isset( $_POST['mobile'] ) ) ? sanitize_text_field( wp_unslash( $_POST['mobile'] ) ) : $user->get( 'mobile' );
+		Playsms::get_template( 'mobile-field-checkout.php', array( 'mobile' => $mobile ) );
+	}
+
+	/**
 	 * Save extra user parameters
 	 *
 	 * @param int $user_id Registered user id.

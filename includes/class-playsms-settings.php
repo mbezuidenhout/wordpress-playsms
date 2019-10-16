@@ -1,6 +1,6 @@
 <?php
 /**
- * Defined the plugin settings.
+ * Defines the plugin settings.
  *
  * @link       https://www.facebook.com/marius.bezuidenhout1
  * @since      1.0.0

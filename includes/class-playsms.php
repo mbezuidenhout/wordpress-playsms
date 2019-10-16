@@ -202,6 +202,7 @@ class Playsms {
 		$this->loader->add_action( 'user_register', $plugin_public, 'save_register' );
 
 		$this->loader->add_action( 'woocommerce_edit_account_form', $plugin_public, 'add_mobile_field_to_my_account_form' );
+		$this->loader->add_action( 'woocommerce_before_checkout_registration_form', $plugin_public, 'add_mobile_field_to_checkout_form' );
 
 	}
 
