@@ -16,7 +16,8 @@
  * Plugin Name:       PlaySMS
  * Plugin URI:        https://github.com/mbezuidenhout/wordpress-playsms
  * Description:       Add functions to WordPress to send SMS via a PlaySMS gateway
- * Version:           1.0.2
+ * Version:           1.0.3
+ * Tested up to:      5.7.0
  * Author:            Marius Bezuidenhout
  * Author URI:        https://www.facebook.com/marius.bezuidenhout1
  * License:           GPL-3.0+
@@ -35,7 +36,12 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PLAYSMS_VERSION', '1.0.2' );
+define( 'PLAYSMS_VERSION', '1.0.3' );
+
+/**
+ * The plugin file used in WordPress
+ */
+define( 'PLAYSMS_PLUGIN_FILE', __FILE__ );
 
 /**
  * The code that runs during plugin activation.
