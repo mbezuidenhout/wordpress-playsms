@@ -177,7 +177,6 @@ class Playsms {
 		/* @see PlaySMS_Admin::admin_menu() phpcs:ignore */
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'admin_menu' );
 		$this->loader->add_action( 'admin_init', Playsms_Settings::get_instance(), 'add_settings_fields' );
-		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename( PLAYSMS_PLUGIN_FILE ), $plugin_admin, 'plugin_links' );
 		$this->loader->run();
 
 	}
@@ -198,6 +197,7 @@ class Playsms {
 
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'add_mobile_field_to_profile_form' );
 		$this->loader->add_action( 'register_form', $plugin_public, 'add_mobile_field_to_register_form' );
+		$this->loader->add_action( 'woocommerce_register_form_start', $plugin_public, 'add_mobile_field_to_register_form' );
 		$this->loader->add_filter( 'registration_errors', $plugin_public, 'registration_errors' );
 		$this->loader->add_filter( 'woocommerce_registration_errors', $plugin_public, 'registration_errors' );
 		$this->loader->add_action( 'user_register', $plugin_public, 'save_register' );
